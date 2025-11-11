@@ -1,0 +1,43 @@
+[project]
+name = "scope"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "unlikeghost", email = "unlikeghost@protonmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "cmaes>=0.12.0",
+    "numpy>=2.3.2",
+    "optuna>=4.4.0",
+    "optuna-dashboard>=0.19.0",
+    "optunahub>=0.3.1",
+    "pandas>=2.3.1",
+    "pot>=0.9.5",
+    "scikit-learn>=1.7.1",
+    "scipy>=1.16.1",
+    "smaz-py3>=1.1.3",
+    "smilez",
+    "smizip>=2.0.1",
+    "torch>=2.8.0",
+    "zstandard>=0.23.0",
+]
+
+[build-system]
+requires = ["uv_build>=0.8.0,<0.9"]
+build-backend = "uv_build"
+
+[dependency-groups]
+experiments = [
+    "cmaes>=0.12.0",
+    "deepchem>=2.8.0",
+    "matplotlib>=3.10.5",
+    "optunahub>=0.3.1",
+    "rdkit>=2025.3.5",
+    "scipy>=1.16.1",
+    "torch>=2.8.0",
+]
+
+[tool.uv.sources]
+smilez = { git = "https://github.com/davidlorenzana/smilez" }
