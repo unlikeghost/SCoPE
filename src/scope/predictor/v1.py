@@ -37,17 +37,11 @@ class SCoPEPredictorV1(_BasePredictor):
 
     def _forward(self, current_cluster: np.ndarray, current_sample: np.ndarray) -> float:
 
-        scores_ = []
-        for distance_metric in self.distance_metrics:
-            # We append the score for each distance metric, not for each dissimilarity metric
-            scores_.append(
-                self._supported_metrics[distance_metric](
-                    current_cluster, current_sample
-                )
-            )
+        scores_ = [
+            self._supported_metrics[distance_metric](current_cluster, current_sample)
+            for distance_metric in self.distance_metrics
+        ]
 
-        # sum all scores
         score_ = sum(scores_)
 
         return score_
-

@@ -28,6 +28,7 @@ class _BasePredictor(ABC):
 
         self.prototype_method = prototype_method
         self.epsilon = epsilon if epsilon and epsilon >= 0.0 else 1e-12
+        self.vectorized_forward = np.vectorize(self._forward, signature='(m,n),(1,n)->()')
 
     def _compute_aggregated_prototype(self, data: np.ndarray) -> np.ndarray:
         """Compute prototype using specified prototype method"""
@@ -111,12 +112,8 @@ class _BasePredictor(ABC):
 
                 compressor_metric, _, _ = cluster_.shape
 
-                for index in range(compressor_metric):
-                    current_score = self._forward(
-                        current_cluster=cluster_[index, :, :], # shape: (samples, samples+1)
-                        current_sample=sample_[index, :, :] # shape: (1, samples+1)
-                    )
-                    iteration_output['scores'][cluster_name].append(current_score)
+                scores = self.vectorized_forward(cluster_, sample_)
+                iteration_output['scores'][cluster_name].extend(scores.item() for scores in scores)
 
             dict_scores: Dict[str, List[float]] = iteration_output['scores']
 
