@@ -2,7 +2,7 @@ from scope.model import SCoPE
 
 compressor_names=['lz77', 'rle']
 compression_metric_names=['ncc', 'ncd']
-distance_metrics=['wasserstein']
+distance_metrics=['euclidean']
 prototype_method=None
 
 
