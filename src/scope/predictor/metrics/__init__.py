@@ -1,10 +1,10 @@
 from .metrics import (cosine,
                       wasserstein,
-                      squared_euclidean)
+                      euclidean)
 
 
 __all__ = [
     'cosine',
-    'squared_euclidean',
+    'euclidean',
     'wasserstein'
 ]

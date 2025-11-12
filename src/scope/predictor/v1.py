@@ -7,13 +7,13 @@ from .metrics import *
 
 class SCoPEPredictorV1(_BasePredictor):
     _supported_metrics = {
-        "squared_euclidean": lambda x1, x2: squared_euclidean(x1, x2),
+        "euclidean": lambda x1, x2: euclidean(x1, x2),
         "cosine": lambda x1, x2: cosine(x1, x2),
         "wasserstein": lambda x1, x2: wasserstein(x1, x2),
     }
 
     def __init__(self,
-                 evaluation_metrics: Union[str, List[str]] = 'squared_euclidean',
+                 evaluation_metrics: Union[str, List[str]] = 'euclidean',
                  **kwargs) -> None:
         super().__init__(
             **kwargs

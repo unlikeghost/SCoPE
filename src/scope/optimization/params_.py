@@ -32,6 +32,6 @@ class ParameterSpace:
 
 
     evaluation_metrics: List[List[str]] = field(
-        default_factory=lambda: all_subsets(['squared_euclidean', 'cosine', 'wasserstein'])
+        default_factory=lambda: all_subsets(['euclidean', 'cosine', 'wasserstein'])
     )
 

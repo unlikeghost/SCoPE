@@ -2,9 +2,8 @@ import ot
 import numpy as np
 
 
-def squared_euclidean(x1: np.ndarray, x2: np.ndarray) -> float:
-    diff = np.asarray(x1, dtype=float) - np.asarray(x2, dtype=float)
-    dist = np.linalg.norm(diff) ** 2
+def euclidean(x1: np.ndarray, x2: np.ndarray) -> float:
+    dist = np.linalg.norm(x1 - x2)
     return float(dist)
 
 def cosine(x1: np.ndarray, x2: np.ndarray) -> float:

@@ -1,8 +1,9 @@
 import os
 import pickle
 import optuna
-from optuna.storages import RDBStorage
 import numpy as np
+from math import prod
+from optuna.storages import RDBStorage
 from datetime import datetime
 from typing import List, Dict, Optional, Any, Union
 from abc import ABC, abstractmethod
@@ -65,13 +66,31 @@ class ScOPEOptimizer(ABC):
         print("Parameter space includes:")
         print("=" * 60)
 
-        print("BASIC PARAMETERS:")
-        print(f"  • Compressor combinations ({len(self.parameter_space.compressor_names_options)})")
-        print(f"  • Compression metric combinations ({len(self.parameter_space.compression_metric_names_options)})")
-        print(f"  • Join string options ({len(self.parameter_space.concat_value_options)}): {[repr(s) for s in self.parameter_space.concat_value_options]}")
-        print(f"  • Aggregation methods: {self.parameter_space.aggregation_method_options}")
-        print(f"  • Evaluation Metrics ({len(self.parameter_space.evaluation_metrics)})")
+        compressor_count = len(self.parameter_space.compressor_names_options)
+        compression_metric_count = len(self.parameter_space.compression_metric_names_options)
+        concat_value_count = len(self.parameter_space.concat_value_options)
+        aggregation_method_count = len(self.parameter_space.aggregation_method_options)
+        evaluation_metrics_count = len(self.parameter_space.evaluation_metrics)
 
+        print("BASIC PARAMETERS:")
+        print(f"  • Compressor combinations ({compressor_count})")
+        print(f"  • Compression metric combinations ({compression_metric_count})")
+        print(
+            f"  • Join string options ({concat_value_count}): {[repr(s) for s in self.parameter_space.concat_value_options]}")
+        print(
+            f"  • Aggregation methods ({aggregation_method_count}): {self.parameter_space.aggregation_method_options}")
+        print(f"  • Evaluation Metrics ({evaluation_metrics_count})")
+
+        total_space = prod([
+            compressor_count,
+            compression_metric_count,
+            concat_value_count,
+            aggregation_method_count,
+            evaluation_metrics_count,
+        ])
+
+        print("=" * 60)
+        print(f"Total size of search space: {total_space}")
         print("=" * 60)
 
     @staticmethod
@@ -86,13 +105,17 @@ class ScOPEOptimizer(ABC):
         if isinstance(compression_metric_names, str):
             compression_metric_names = compression_metric_names.split(',')
 
+        evaluation_metric_names = params['evaluation_metrics']
+        if isinstance(evaluation_metric_names, str):
+            evaluation_metric_names = evaluation_metric_names.split(',')
+
         aggregation_method = params.get('aggregation_method')
         if aggregation_method == 'None' or aggregation_method == 'null' or aggregation_method == '':
             aggregation_method = None
 
         base_params = {
             'aggregation_method': aggregation_method,
-            'evaluation_metrics': params['evaluation_metrics'],
+            'evaluation_metrics': evaluation_metric_names,
             'compressor_names': compressor_names,
             'compression_metric_names': compression_metric_names,
             'join_string': params['join_string'],
@@ -123,6 +146,7 @@ class ScOPEOptimizer(ABC):
 
         compressor_choices = [','.join(combo) for combo in self.parameter_space.compressor_names_options]
         metric_choices = [','.join(combo) for combo in self.parameter_space.compression_metric_names_options]
+        eval_metric_choices = [','.join(combo) for combo in self.parameter_space.evaluation_metrics]
 
         return {
             'join_string': trial.suggest_categorical(
@@ -131,7 +155,7 @@ class ScOPEOptimizer(ABC):
             ),
             'evaluation_metrics': trial.suggest_categorical(
                 'evaluation_metrics',
-                self.parameter_space.evaluation_metrics
+                eval_metric_choices
             ),
             'aggregation_method': None if aggregation_method == '' else aggregation_method,
             'compressor_names': trial.suggest_categorical(
@@ -215,7 +239,7 @@ class ScOPEOptimizer(ABC):
                     if metric == 'log_loss':
                         combined_score += (1 - scores[metric]) * weight
                     elif metric == 'mcc':
-                        normalized_score = (scores[metric] + 1) / 2
+                        normalized_score = max(scores[metric], 0.0)
                         combined_score += normalized_score * weight
                     else:
                         combined_score += scores[metric] * weight
@@ -224,6 +248,10 @@ class ScOPEOptimizer(ABC):
 
         elif self.target_metric_name == 'log_loss':
             return scores['log_loss']
+
+        elif self.target_metric_name == 'mcc':
+            return max(scores['mcc'], 0.0)
+
         else:
             return scores[self.target_metric_name]
 

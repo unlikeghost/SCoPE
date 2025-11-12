@@ -37,7 +37,8 @@ class CompressionMatrix:
         'cd': 2,
         'ucd': 3,
         'ncc': 4,
-        'nccd': 5
+        'nccd': 5,
+        'clm': 6,
     }
 
     def _validate_compressor_names(self, compressor_names):

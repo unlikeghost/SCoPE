@@ -41,7 +41,19 @@ def cdm(c_x1: float, c_x2: float, c_x1x2: float, c_x2x1: Optional[float] = None)
         denominator=denominator,
         error_msg="Cannot compute CDM: c_x1 + c_x2 is zero"
     )
-    
+
+def clm(c_x1: float, c_x2: float, c_x1x2: float, c_x2x1: Optional[float] = None) -> float:
+    """Conditional Likelihood Measure"""
+    _ = c_x2x1
+
+    denominator = c_x1x2
+    numerator = 1 - (c_x1 + c_x2 - c_x1x2)
+
+    return abs(_safe_division(
+        numerator=numerator,
+        denominator=denominator,
+        error_msg="Cannot compute CLM: c_x1 + c_x2 - c_x1x2 is zero"
+    ))
 
 def cd(c_x1: float, c_x2: float, c_x1x2: float, c_x2x1: float) -> float:
     """Compression Dissimilarity"""
@@ -108,7 +120,8 @@ COMPRESSION_METRICS = {
     'cd': cd,
     'ucd': ucd,
     'ncc': ncc,
-    'nccd': nccd
+    'nccd': nccd,
+    'clm': clm,
 }
 
 
