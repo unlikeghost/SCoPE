@@ -10,34 +10,34 @@ class _BasePredictor(ABC):
     start_key_value_sample: str = 'SCoPE_Sample_'
     start_key_sigma: str = 'SCoPE_Sigma'
 
-    _aggregation_methods = {
-        "mean": lambda data: np.mean(data, axis=0),
-        "median": lambda data: np.median(data, axis=0),
-        "sum": lambda data: np.sum(data, axis=0),
-        "gmean": lambda data: gmean(data, axis=0)
+    _prototype_methods = {
+        "mean": lambda data: np.mean(data, axis=1),
+        "median": lambda data: np.median(data, axis=1),
+        "sum": lambda data: np.sum(data, axis=1),
+        "gmean": lambda data: gmean(data, axis=1)
     }
 
-    def __init__(self, aggregation_method: Optional[str] = None, epsilon: Optional[float] = None):
+    def __init__(self, prototype_method: Optional[str] = None, epsilon: Optional[float] = None):
 
-        if aggregation_method is not None and aggregation_method not in self._aggregation_methods:
+        if prototype_method is not None and prototype_method not in self._prototype_methods:
             raise ValueError(
-                f"Invalid aggregation method: {aggregation_method}. "
+                f"Invalid prototype method: {prototype_method}. "
                 f"Valid options: "
-                f"{self._aggregation_methods} or None for no aggregation"
+                f"{self._prototype_methods} or None for no prototype"
             )
 
-        self.aggregation_method = aggregation_method
+        self.prototype_method = prototype_method
         self.epsilon = epsilon if epsilon and epsilon >= 0.0 else 1e-12
 
     def _compute_aggregated_prototype(self, data: np.ndarray) -> np.ndarray:
-        """Compute prototype using specified aggregation method"""
-        if self.aggregation_method is None:
+        """Compute prototype using specified prototype method"""
+        if self.prototype_method is None:
             raise ValueError("Aggregation method cannot be None when computing prototype")
 
-        prototype = self._aggregation_methods[self.aggregation_method](
+        prototype = self._prototype_methods[self.prototype_method](
             data
         )
-        prototype = np.expand_dims(prototype, axis=0)
+        prototype = np.expand_dims(prototype, axis=1)
 
         return prototype
 
@@ -105,18 +105,18 @@ class _BasePredictor(ABC):
                 cluster_: np.ndarray = data_matrix[cluster_key] # samples we know of class "cluster_key"
                 sample_: np.ndarray = data_matrix[sample_key] # sample to predict based on cluster "cluster_key"
 
-                if self.aggregation_method is not None:
-                    # We calculate the prototype if the aggregation method is specified
+                if self.prototype_method is not None:
+                    # We calculate the prototype if the prototype method is specified
                     cluster_ = self._compute_aggregated_prototype(cluster_)
 
-                _, _, n_compressors, _ = cluster_.shape
+                compressor_metric, _, _ = cluster_.shape
 
-                for compressor_index in range(n_compressors):
-                    compressor_score = self._forward(
-                        current_cluster=cluster_[:, :, compressor_index, :], # shape: (samples, samples+1, n_metrics)
-                        current_sample=sample_[:, :, compressor_index, :] # shape: (1, samples+1, n_metrics)
+                for index in range(compressor_metric):
+                    current_score = self._forward(
+                        current_cluster=cluster_[index, :, :], # shape: (samples, samples+1)
+                        current_sample=sample_[index, :, :] # shape: (1, samples+1)
                     )
-                    iteration_output['scores'][cluster_name].append(compressor_score)
+                    iteration_output['scores'][cluster_name].append(current_score)
 
             dict_scores: Dict[str, List[float]] = iteration_output['scores']
 

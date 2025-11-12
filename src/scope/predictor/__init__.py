@@ -1,4 +1,4 @@
-from .base import _BasePredictor
+from .base_ import _BasePredictor
 from .v1 import  SCoPEPredictorV1
 
 

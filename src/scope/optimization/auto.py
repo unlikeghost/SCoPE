@@ -108,13 +108,13 @@ class ScOPEOptimizerAuto(ScOPEOptimizer):
 
         compressor_names = self.best_params['compressor_names']
         compression_metric_names = self.best_params['compression_metric_names']
-        evaluation_metrics_names = self.best_params['evaluation_metrics']
+        distance_metrics_names = self.best_params['distance_metrics']
 
         is_ensemble = len(compressor_names) > 1 or len(compression_metric_names) > 1
 
         print(f"Compressors: {compressor_names}")
         print(f"Compression metrics: {compression_metric_names}")
-        print(f"Evaluation metrics: {evaluation_metrics_names}")
+        print(f"Evaluation metrics: {distance_metrics_names}")
 
         if is_ensemble:
             print("Ensemble configuration detected")
@@ -310,8 +310,8 @@ class ScOPEOptimizerAuto(ScOPEOptimizer):
             f.write(f"Compressor combinations: {len(self.parameter_space.compressor_names_options)}\n")
             f.write(f"Compression metric combinations: {len(self.parameter_space.compression_metric_names_options)}\n")
             f.write(f"Join string options: {self.parameter_space.concat_value_options}\n")
-            f.write(f"Model evaluation metrics: {self.parameter_space.evaluation_metrics}\n")
-            f.write(f"Aggregation methods: {self.parameter_space.aggregation_method_options}\n")
+            f.write(f"Model evaluation metrics: {self.parameter_space.distance_metrics_options}\n")
+            f.write(f"Aggregation methods: {self.parameter_space.prototype_method_options}\n")
 
         print(f"AutoSampler analysis report saved to {filepath}")
 

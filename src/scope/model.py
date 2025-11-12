@@ -19,15 +19,15 @@ class SCoPE:
             'compression_metric_names': self._compression_metric_names,
             'compression_level': self._compression_level,
             'join_string': self._join_string,
-            'evaluation_metrics': self._evaluation_metrics,
-            'aggregation_method': self._aggregation_method,
+            'distance_metrics': self._distance_metrics,
+            'prototype_method': self._prototype_method,
         }
 
         return params
 
     def __init__(self,
-                 evaluation_metrics: str = 'squared_euclidean',
-                 aggregation_method: Optional[str] = None,
+                 distance_metrics: str = 'euclidean',
+                 prototype_method: Optional[str] = None,
                  compressor_names: Union[str, List[str]] = 'gzip',
                  compression_metric_names: Union[str, List[str]] = 'ncd',
                  compression_level: int = 9,
@@ -36,8 +36,8 @@ class SCoPE:
                  ):
 
         self.predictor: _BasePredictor = SCoPEPredictorV1(
-            evaluation_metrics=evaluation_metrics,
-            aggregation_method=aggregation_method,
+            distance_metrics=distance_metrics,
+            prototype_method=prototype_method,
         )
 
         self.compression_matrix: CompressionMatrix = CompressionMatrix(
@@ -48,8 +48,8 @@ class SCoPE:
             n_jobs=n_jobs
         )
 
-        self._evaluation_metrics = evaluation_metrics
-        self._aggregation_method = aggregation_method
+        self._distance_metrics = distance_metrics
+        self._prototype_method = prototype_method
 
         self._compressor_names = compressor_names
         self._compression_metric_names = compression_metric_names

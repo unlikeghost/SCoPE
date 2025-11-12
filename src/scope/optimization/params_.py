@@ -26,12 +26,12 @@ class ParameterSpace:
         default_factory=lambda: [' ', '||SEP_SAFE_DELIM_SEP|||']
     )
 
-    aggregation_method_options: List[str] = field(
+    prototype_method_options: List[str] = field(
         default_factory=lambda: ['mean', 'median', 'sum', 'gmean', '']
     )
 
 
-    evaluation_metrics: List[List[str]] = field(
+    distance_metrics_options: List[List[str]] = field(
         default_factory=lambda: all_subsets(['euclidean', 'cosine', 'wasserstein'])
     )
 

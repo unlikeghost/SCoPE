@@ -281,6 +281,12 @@ class CompressionMatrix:
         # if self.get_sigma:
         #     sigma = self.compute_sigma(samples=cluster)
 
+        # Shape: n_compressors * n_metrics, 1, n_samples + 1
+        sample_matrix = np.transpose(sample_matrix, (2, 3, 0, 1)).reshape(self._n_compressors * self._n_metrics, 1, len(cluster) + 1)
+
+        # Shape: n_compressors * n_metrics, n_samples, n_samples + 1
+        cluster_matrix = np.transpose(cluster_matrix, (2, 3, 0, 1)).reshape(self._n_compressors * self._n_metrics, len(cluster), len(cluster) + 1)
+
         return sample_matrix, cluster_matrix, sigma
 
     def get_one_compression_matrix(self, sample: str, kw_samples: Dict[Union[int, str], List[str]]) ->  Dict[str, np.ndarray]:
