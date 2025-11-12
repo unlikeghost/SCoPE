@@ -24,16 +24,16 @@ test_samples = {
 
 test_sample = "Fantástica película que combina acción emocionante con momentos de gran profundidad emocional."
 
-
 compression_matrix = cm(samples=test_sample, kw_samples=test_samples)
 
 
 predictor = SCoPEPredictorV1(
-    evaluation_metrics=['wasserstein']
+    prototype_method=None,
+    distance_metrics=['wasserstein', 'euclidean']
 )
 
 result = predictor(
-    list_of_cm=compression_matrix
+    list_of_cm=compression_matrix,
 )
 
 print(result)

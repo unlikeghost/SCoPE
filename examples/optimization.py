@@ -57,7 +57,7 @@ kw_samples_train = [
 auto_optimizer = ScOPEOptimizerAuto(
     random_seed=42,
     n_trials=10,
-    target_metric='log_loss',
+    target_metric='mcc',
     study_name="test",
     n_jobs=1,
 )

@@ -2,8 +2,8 @@ from scope.model import SCoPE
 
 compressor_names=['lz77', 'rle']
 compression_metric_names=['ncc', 'ncd']
-evaluation_metrics=['wasserstein']
-aggregation_method=None
+distance_metrics=['wasserstein']
+prototype_method=None
 
 
 test_samples = {
@@ -20,8 +20,8 @@ test_samples = {
 test_sample = "Fantástica película que combina acción emocionante con momentos de gran profundidad emocional."
 
 model = SCoPE(
-    evaluation_metrics=evaluation_metrics,
-    aggregation_method=aggregation_method,
+    distance_metrics=distance_metrics,
+    prototype_method=prototype_method,
     compressor_names=compressor_names,
     compression_metric_names=compression_metric_names,
     join_string=' ',
