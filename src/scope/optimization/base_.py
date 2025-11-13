@@ -239,7 +239,7 @@ class ScOPEOptimizer(ABC):
                     if metric == 'log_loss':
                         combined_score += (1 - scores[metric]) * weight
                     elif metric == 'mcc':
-                        normalized_score = max(scores[metric], 0.0)
+                        normalized_score = (scores['mcc'] + 1) / 2
                         combined_score += normalized_score * weight
                     else:
                         combined_score += scores[metric] * weight
@@ -250,7 +250,14 @@ class ScOPEOptimizer(ABC):
             return scores['log_loss']
 
         elif self.target_metric_name == 'mcc':
-            return max(scores['mcc'], 0.0)
+
+            mcc = (scores['mcc'] + 1) / 2
+
+            penalty = 0.5 / (1 + np.exp(-10 * mcc))
+
+            return mcc - penalty
+
+            # return (scores['mcc'] + 1) / 2
 
         else:
             return scores[self.target_metric_name]

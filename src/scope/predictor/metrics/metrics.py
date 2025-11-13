@@ -1,16 +1,20 @@
 import ot
-from scipy.spatial.distance import cdist
 import numpy as np
 
 
 def euclidean(x1: np.ndarray, x2: np.ndarray) -> float:
-    # dist = np.linalg.norm(x1 - x2)
-    dist = cdist(x1, x2, metric='euclidean').mean()
+    dist = np.linalg.norm(x1 - x2)
     return float(dist)
 
 def cosine(x1: np.ndarray, x2: np.ndarray) -> float:
-    dist = cdist(x1, x2, metric='cosine')
-    return dist.mean()
+    dot_product = np.sum(x1 * x2, axis=-1)
+    norm_x1 = np.linalg.norm(x1, axis=-1)
+    norm_x2 = np.linalg.norm(x2, axis=-1)
+
+    cosine_similarity = dot_product / (norm_x1 * norm_x2)
+    cosine_distance = 1 - cosine_similarity
+
+    return np.mean(cosine_distance).item()
 
 def wasserstein(x1: np.ndarray, x2: np.ndarray) -> float:
 
